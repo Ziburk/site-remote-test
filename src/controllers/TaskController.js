@@ -1,6 +1,6 @@
 const Task = require('../models/Task');
 const pool = require('../config/db');
-const notificationService = require('../services/notificationService');
+const notificationService = require('../services/NotificationService');
 
 class TaskController {
     //Получает список всех задач пользователя с фильтрацией
