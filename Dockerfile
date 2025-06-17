@@ -8,10 +8,8 @@ COPY package*.json ./
 # Устанавливаем только production зависимости
 RUN npm install --production
 
-# Копируем собранные файлы и исходный код
-COPY dist ./dist
-COPY src ./src
-COPY .env ./
+# Копируем все файлы проекта
+COPY . .
 
 # Открываем порт
 EXPOSE 3000
