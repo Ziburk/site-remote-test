@@ -11,8 +11,9 @@ RUN npm install --production
 # Копируем все файлы проекта
 COPY . .
 
-# Устанавливаем переменную окружения для порта
+# Устанавливаем переменные окружения
 ENV PORT=3000
+ENV DOMAIN=m8sd-fgju-kuuh.gw-1a.dockhost.net
 
 # Открываем порт
 EXPOSE 3000

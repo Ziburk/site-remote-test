@@ -14,7 +14,7 @@ const app = express();
 
 // Настройка CORS для поддержки всех доменов
 app.use(cors({
-    origin: true, // Разрешаем все домены
+    origin: process.env.DOMAIN || true, // Разрешаем указанный домен или все домены
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
