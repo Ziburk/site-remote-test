@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const routes = require('./routes');
 const pool = require('./config/db');
-const notificationService = require('./services/notificationService');
+const notificationService = require('./services/NotificationService');
 
 const app = express();
 
