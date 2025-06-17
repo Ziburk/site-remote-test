@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List - Вход</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="container">
+        <img src="img/logo.png" alt="To-Do List Logo" class="logo">
+        <h1>To Do List</h1>
+        <p class="welcome-text">
+            Добро пожаловать в ваш персональный планировщик задач! 
+            Организуйте свою работу эффективно и достигайте большего.
+        </p>
+        
+        <div class="features">
+            <h3>Возможности приложения:</h3>
+            <ul>
+                <li>Создание и управление задачами</li>
+                <li>Категоризация задач</li>
+                <li>Отслеживание прогресса</li>
+                <li>Уведомления о сроках</li>
+                <li>Статистика выполнения</li>
+                <li>Экспорт данных в PDF</li>
+            </ul>
+        </div>
+
+        <div id="telegram-login-container"></div>
+        
+        <p class="login-note">
+            Для входа используйте свой аккаунт Telegram. 
+            Это безопасно и не требует дополнительной регистрации.
+        </p>
+    </div>
+
+    <script>
+        // Функция для установки куки
+        function setCookie(name, value, days) {
+            let expires = '';
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = '; expires=' + date.toUTCString();
+            }
+            document.cookie = name + '=' + (value || '') + expires + '; path=/';
+        }
+
+        // Инициализация Telegram виджета
+        window.onload = function() {
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://telegram.org/js/telegram-widget.js?22';
+            script.setAttribute('data-telegram-login', 'ZiburkToDoListBot');
+            script.setAttribute('data-size', 'large');
+            script.setAttribute('data-radius', '10');
+            script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+            script.setAttribute('data-request-access', 'write');
+            
+            // Добавляем поддержку всех доменов
+            script.setAttribute('data-auth-url', window.location.origin);
+            
+            document.getElementById('telegram-login-container').appendChild(script);
+        };
+
+        // Обработка авторизации
+        function onTelegramAuth(user) {
+            fetch('/api/auth/telegram', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    // Сохраняем токен и данные пользователя
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('telegramUser', JSON.stringify(user));
+                    setCookie('auth_token', data.token, 1); // Сохраняем токен в куки на 1 день
+                    // Перенаправляем на главную страницу
+                    window.location.href = '/';
+                } else {
+                    throw new Error('Ошибка авторизации');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при авторизации. Пожалуйста, попробуйте снова.');
+            });
+        }
+
+        // Проверяем, есть ли уже токен
+        const token = localStorage.getItem('auth_token');
+        if (token) {
+            // Проверяем валидность токена
+            fetch('/api/auth/verify', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.valid) {
+                    // Если токен валидный, перенаправляем на главную
+                    window.location.href = '/';
+                }
+            })
+            .catch(() => {
+                // В случае ошибки очищаем токен
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('telegramUser');
+            });
+        }
+    </script>
+</body>
+</html> 

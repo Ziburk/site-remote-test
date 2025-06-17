@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <!-- Библиотеки -->
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script src="./node_modules/chart.js/dist/chart.umd.js"></script>
+    <script src="./node_modules/pdfmake/build/pdfmake.min.js"></script>
+    <script src="./node_modules/pdfmake/build/vfs_fonts.js"></script>
+
+    <!-- Скрипты авторизации -->
+    <script src="javascript/auth.js"></script>
+
+    <!-- Основной скрипт -->
+    <script src="dist/bundle.js" defer></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-wrapper">
+            <a href="index.html" class="logo-link">
+                <img src="img/logo.png" alt="logo" class="header-logo">
+            </a>
+            <h1 class="header-title">To Do List by @Ziburk</h1>
+        </div>
+        <div class="profile-wrapper">
+            <div id="telegram-login-container" class="hidden"></div>
+            <a id="telegram-bot-link" class="telegram-bot-button" href="https://t.me/ZiburkToDoListBot">
+                <img src="img/telegram.svg" alt="Telegram" class="telegram-icon">
+                Открыть бота
+            </a>
+            <div id="user-profile" class="hidden">
+                <img id="user-avatar" class="user-avatar" alt="Аватар пользователя">
+                <span id="user-name" class="user-name"></span>
+                <button id="logout-button" class="logout-button">
+                    <img src="img/logout.svg" alt="Выйти" class="logout-icon">
+                    Выйти
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <h2 class="main-title">Мои задачи</h2>
+        <ul class="main-navigation">
+            <li class="main-nav-item active" data-tab="tasks">Задачи</li>
+            <li class="main-nav-item" data-tab="statistics">Статистика</li>
+        </ul>
+
+        <!-- Вкладка "Задачи" -->
+        <div class="tab-content active" id="tasks">
+            <div class="container">
+                <div class="filter-controls">
+                    <div class="category-controls">
+                        <select id="category-filter" class="category-filter"></select>
+                        <button id="category-manager-btn" class="category-manager-btn"><img src="img/cat-settings.svg"
+                                alt="settings" class="category-manager-ico"></button>
+                    </div>
+                    <div class="date-filter-controls">
+                        <select id="date-sort" class="date-sort">
+                            <option value="none">Без сортировки</option>
+                            <option value="asc">Дата по возрастанию</option>
+                            <option value="desc">Дата по убыванию</option>
+                            <option value="nearest">Ближайшие сроки</option>
+                            <option value="farthest">Дальние сроки</option>
+                        </select>
+                        <input type="date" id="date-filter" class="date-filter">
+                        <button id="clear-date-filter" class="clear-date-filter">×</button>
+                    </div>
+                    <div class="status-filter">
+                        <label><input type="radio" name="status" value="all" checked> Все</label>
+                        <label><input type="radio" name="status" value="active"> Активные</label>
+                        <label><input type="radio" name="status" value="completed"> Завершенные</label>
+                    </div>
+                </div>
+                <button class="add-task-button">Добавить задачу</button>
+                <button class="export-button">Экспорт в PDF</button>
+                <h4 class="current-tasks-title">Текущие</h4>
+                <ul id="current-tasks-list" class="task-list"></ul>
+                <h4 class="completed-tasks-title">Выполненные</h4>
+                <ul id="completed-tasks-list" class="task-list"></ul>
+            </div>
+        </div>
+
+        <!-- Вкладка "Статистика" -->
+        <div class="tab-content" id="statistics">
+            <section class="stats-section">
+                <h2 class="stats-title">Статистика задач</h2>
+
+                <!-- Добавляем переключатель типов диаграмм -->
+                <div class="chart-type-selector">
+                    <select id="chart-type">
+                        <option value="completion">По выполнению</option>
+                        <option value="completed-by-category">Выполненные по категориям</option>
+                        <option value="active-by-category">Невыполненные по категориям</option>
+                    </select>
+                </div>
+
+                <div class="stats-container">
+                    <div class="pie-chart-container">
+                        <canvas id="pieChart" width="200" height="200"></canvas>
+                    </div>
+                    <div class="stats-legend" id="chart-legend">
+                        <!-- Легенда будет генерироваться динамически -->
+                    </div>
+                </div>
+
+                <!-- График продуктивности -->
+                <div class="productivity-section">
+                    <h3>График продуктивности</h3>
+                    <div class="productivity-controls">
+                        <label>Период:
+                            <select id="productivity-period">
+                                <option value="7">Последние 7 дней</option>
+                                <option value="14">Последние 14 дней</option>
+                                <option value="30">Последние 30 дней</option>
+                                <option value="custom">Выбрать период</option>
+                            </select>
+                        </label>
+                        <div id="custom-period-selector" class="hidden">
+                            <input type="date" id="productivity-start-date">
+                            <span>по</span>
+                            <input type="date" id="productivity-end-date">
+                            <button id="apply-custom-period">Применить</button>
+                        </div>
+                    </div>
+                    <div class="productivity-chart-container">
+                        <canvas id="productivityChart" width="600" height="200"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer class="footer">
+
+    </footer>
+
+</body>
+
+</html>
